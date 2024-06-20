@@ -1,5 +1,6 @@
 //Renojan Kannan (300240070) and Karthikan Suntharesan (300240065)
 
+
 let WORDS = [
     "Apple", "Bread", "Chair", "Dance", "Eagle", 
     "Flash", "Grace", "Happy", "Jelly", "Knack",
@@ -25,9 +26,9 @@ newButton.textContent = 'Play Again!';
 //checks if input string is a letter (used to check if guess contains only letters)
 var isAlpha = function(ch){
     return /^[A-Z]$/i.test(ch);
-}
+  }
 
-createBoard();
+  createBoard();
 
 
 /*
@@ -42,14 +43,14 @@ document.addEventListener("keyup", (e) => {
     let box = row.children[rowIndex]
 
     let pressedKey = String(e.key);
-
-    if (pressedKey === "Backspace") {
+    
+    if(pressedKey === "Backspace"){
         box = row.children[rowIndex - 1] //sending the previous box to the function since the current pointer should be on an empty box due to insertletter
         deleteLetter(box);
         return;
     }
 
-    if (pressedKey === "Enter") {
+    if(pressedKey === "Enter"){
         checkGuess(row);
         return;
     }
@@ -78,10 +79,10 @@ function createBoard() {
     for (let i = 0; i < NUMBER_OF_GUESSES; i++) {
         let row = document.createElement("div");
         row.className = "guess_row";
-
+        
         for (let j = 0; j < 5; j++) {
             let box = document.createElement("div");
-
+            
             box.className = "letter_box";
             row.appendChild(box);
         }
@@ -90,13 +91,13 @@ function createBoard() {
     }
 }
 
-function deleteLetter(box) {
+function deleteLetter(box){
     if (rowIndex == 0) return; //dont do anything if no inputs
-    box.textContent = "";
+    box.textContent = ""; 
     rowIndex -= 1; //setting pointer to be at the current box with a letter which is the previous box
 }
 
-function checkGuess(row) {
+function checkGuess(row){
     if (rowIndex < 4 || row.children[4].textContent === "") return; //do nothing if boxes not filled or the last box is empty
     gleft--; //subtract a guess
     let checkIndex = 0;
@@ -107,10 +108,10 @@ function checkGuess(row) {
             numRight++;
             box.classList.add("correct_box");
         }
-        else if (answer.includes(box.textContent)) {
+        else if(answer.includes(box.textContent)) {
             box.classList.add("close_box");
         }
-        else {
+        else{
             box.classList.add("wrong_box");
         }
         checkIndex++;

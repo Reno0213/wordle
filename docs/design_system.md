@@ -20,3 +20,6 @@ This document outlines the design system for the project
 
 ### Game Board
 ![Game-Board](/docs/design_system/Wordle%20Start%20Screen.PNG)
+
+### Button
+![Button](/wordle/docs/design_system/Replay%20Button.png)
