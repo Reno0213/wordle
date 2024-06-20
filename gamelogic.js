@@ -1,10 +1,21 @@
 //Renojan Kannan (300240070) and Karthikan Suntharesan (300240065)
 
 
-//let WORDS = ["apple", "pear", "banana", "orange"];
+let WORDS = [
+    "Apple", "Bread", "Chair", "Dance", "Eagle", 
+    "Flash", "Grace", "Happy", "Jelly", "Knack",
+    "Light", "Maple", "Nerve", "Ocean", "Prime", 
+    "Quiet", "Ready", "Scale", "Treat", "Usual",
+    "Vivid", "Woven", "Yield", "Zebra", "Alert", 
+    "Blame", "Crust", "Draft", "Event", "Field",
+    "Angle", "Blaze", "Cider", "Dream", "Entry",
+    "Flour", "Grape", "Hotel", "Ivory", "Jewel",
+    "Knife", "Lemon", "March", "North", "Olive",
+    "Pouch", "Quest", "Radio", "Shelf", "Thing",
+    "Unity", "Value", "Whole", "Zephyr"
+];
 const NUMBER_OF_GUESSES = 6;
-//let answer = WORDS[Math.floor(Math.random() * WORDS.length)];
-let answer = "apple";
+let answer = WORDS[Math.floor(Math.random() * WORDS.length)];
 let gleft = NUMBER_OF_GUESSES;
 let rowIndex = 0;
 let gameOver = false;
@@ -113,6 +124,7 @@ function checkGuess(row){
 
     } else if(gleft === 0) {
         gameOver = true;
+        document.getElementById("finalmsg").innerText = "Word was: " + answer;
         document.body.appendChild(newButton);
     }
     
