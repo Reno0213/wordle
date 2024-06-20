@@ -7,10 +7,12 @@ const NUMBER_OF_GUESSES = 6;
 let answer = "apple";
 let gleft = NUMBER_OF_GUESSES;
 let rowIndex = 0;
-//checks if input string is a letter (used to check if guess contains only letters)
-//const isAlpha = str => /^[a-zA-Z]*$/.test(str);
+let gameOver = false;
 
-//above one wasnt working this one works
+//button that displays after the game is done
+const newButton = document.createElement('button');
+newButton.textContent = 'Play Again!';
+//checks if input string is a letter (used to check if guess contains only letters)
 var isAlpha = function(ch){
     return /^[A-Z]$/i.test(ch);
   }
@@ -22,22 +24,13 @@ var isAlpha = function(ch){
 This function will listen for keystrokes and execute helper functions based on the input
 */
 document.addEventListener("keyup", (e) => {
+    
+    if (gameOver) return; // no inputs accepted if game is done
 
-    //for some reason rowindex is being used to track columns and not box
+    //rowindex is being used to track columns and not box
     let row = document.getElementsByClassName("guess_row")[6 - gleft]
     let box = row.children[rowIndex]
 
-    //if no guesses left, return
-    // if(gleft === 0 || box == 5){
-    //     return;
-    // }
-
-    // if(gleft === 0) {
-    //     alert("Out of guesses the word was: " + answer);
-    //     location.reload();
-    // }
-
-    //store input
     let pressedKey = String(e.key);
     
     if(pressedKey === "Backspace"){
@@ -52,14 +45,16 @@ document.addEventListener("keyup", (e) => {
     }
 
     if(isAlpha(pressedKey)){
-        //insertLetter(box, box)
         insertLetter(pressedKey, box);
     } else {
         return;
     }
-
-    //insertLetter(pressedKey, box);
 })
+
+//reload page to play again
+newButton.addEventListener('click', () => {
+    location.reload();
+  });
 
 /*
 This function creates the 6x5 game board that Wordle will be played in
@@ -97,7 +92,7 @@ function checkGuess(row){
     let checkIndex = 0;
     let numRight = 0;
     for(let i = 0; i < 5; i++){
-        box = row.children[checkIndex]; //not using rowindex as I think itll mess up the other functions?
+        box = row.children[checkIndex]; //not using rowindex as itll mess up the other functions
         if(box.textContent === answer[i]){
             numRight++;
             box.classList.add("correct_box");
@@ -112,36 +107,32 @@ function checkGuess(row){
     }
 
     if (numRight === 5){
-        alert("You Won!");
-        location.reload();
+        gameOver = true;
+        document.getElementById("finalmsg").innerText = "You Won!";
+        document.body.appendChild(newButton);
+
     } else if(gleft === 0) {
-        alert("Out of guesses the word was: " + answer);
-        location.reload();
+        gameOver = true;
+        document.body.appendChild(newButton);
     }
     
     row = document.getElementsByClassName("guess_row")[6 - gleft] // move to next row
     rowIndex = 0; //reset column counter
     
 
-    numRight = 0; //reset the counter so that next guesses dont increment the amount correct although if every function call doesnt retain memory from the previous call this is useless
+    numRight = 0; //reset the counter so that next guesses dont increment the amount correct
 
     
     
 }
 
 function insertLetter(letter, box){
-    //if(lettersleft === 0){
-    //    return
-    //}
-    //let row = document.getElementsByClassName("guess_row")[6 - gleft]
-    //let box = row.children[rowIndex]
+    
     if (rowIndex ==  5) return; // stop anymore letters being added
     box.textContent = letter
-    //box.classList.add("filled_box") dont see what the point of this was as of rn
-    //currentGuess.push(letter)
 
     // this will send u to the next box in the row which should be empty
-    rowIndex += 1 //how is this rowindex even working?? it has access to the rowindex in eventlistener?
+    rowIndex += 1 
 }
 
 
