@@ -1,6 +1,7 @@
 //Renojan Kannan (300240070) and Karthikan Suntharesan (300240065)
 
-let WORDS = ["apple", "pear", "banana", "orange"];
+
+//let WORDS = ["apple", "pear", "banana", "orange"];
 const NUMBER_OF_GUESSES = 6;
 //let answer = WORDS[Math.floor(Math.random() * WORDS.length)];
 let answer = "apple";
@@ -92,6 +93,7 @@ function deleteLetter(box){
 
 function checkGuess(row){
     if (rowIndex < 4 || row.children[4].textContent === "") return; //do nothing if boxes not filled or the last box is empty
+    gleft--; //subtract a guess
     let checkIndex = 0;
     let numRight = 0;
     for(let i = 0; i < 5; i++){
@@ -112,17 +114,17 @@ function checkGuess(row){
     if (numRight === 5){
         alert("You Won!");
         location.reload();
-    }
-    
-    gleft--; //subtract a guess
-    row = document.getElementsByClassName("guess_row")[6 - gleft] // move to next row
-    rowIndex = 0; //reset column counter
-    numRight = 0; //reset the counter so that next guesses dont increment the amount correct although if every function call doesnt retain memory from the previous call this is useless
-
-    if(gleft === 0) {
+    } else if(gleft === 0) {
         alert("Out of guesses the word was: " + answer);
         location.reload();
     }
+    
+    row = document.getElementsByClassName("guess_row")[6 - gleft] // move to next row
+    rowIndex = 0; //reset column counter
+    
+
+    numRight = 0; //reset the counter so that next guesses dont increment the amount correct although if every function call doesnt retain memory from the previous call this is useless
+
     
     
 }

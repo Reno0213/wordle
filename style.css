@@ -1,11 +1,21 @@
 /* Renojan Kannan (300240070) and Karthikan Suntharesan (300240065) */
+body {
+  background-color: #282828;
+}
+#title {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #F9F6EE;
+  font-weight: bold;
+  font-size: 36px;
+  text-align: center
+}
 
 #game_board {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .guess_row {
@@ -14,6 +24,7 @@
 }
 
 .letter_box {
+  /* box settings */
   width: 50px;
   height: 50px;
   border: 2px solid #000000;
@@ -21,7 +32,7 @@
   align-items: center;
   background-color: #ffffff;
 
-  /* Text */
+  /* Text settings */
   font-family: Arial, Helvetica, sans-serif;
   color: black;
   font-weight: bold;
@@ -31,6 +42,7 @@
   align-items: center;
   text-transform: capitalize;
 }
+
 
 .filled_box {
   border: 2px solid black;
