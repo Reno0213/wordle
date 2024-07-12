@@ -1,0 +1,19 @@
+<script>
+    function createBoard() {
+    let board = document.getElementById("game_board");
+
+    for (let i = 0; i < NUMBER_OF_GUESSES; i++) {
+        let row = document.createElement("div");
+        row.className = "guess_row";
+
+        for (let j = 0; j < 5; j++) {
+            let box = document.createElement("div");
+
+            box.className = "letter_box";
+            row.appendChild(box);
+        }
+
+        board.appendChild(row);
+    }
+}
+</script>
