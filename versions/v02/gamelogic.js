@@ -18,6 +18,7 @@ const NUMBER_OF_GUESSES = 6;
 let answer = WORDS[Math.floor(Math.random() * WORDS.length)];
 let gleft = NUMBER_OF_GUESSES;
 let rowIndex = 0;
+let boxNum = 0;
 let gameOver = false;
 
 //button that displays after the game is done
@@ -31,35 +32,49 @@ var isAlpha = function(ch){
   createBoard();
 
 
+// });
 /*
 This function will listen for keystrokes and execute helper functions based on the input
 */
 document.addEventListener("keyup", (e) => {
     
-    if (gameOver) return; // no inputs accepted if game is done
+    // if (gameOver) return; // no inputs accepted if game is done
 
-    //rowindex is being used to track columns and not box
-    let row = document.getElementsByClassName("guess_row")[6 - gleft]
-    let box = row.children[rowIndex]
+    // //rowindex is being used to track columns and not box
+    // let row = document.getElementsByClassName("guess_row")[6 - gleft]
+    // let box = row.children[rowIndex]
+
+    // let pressedKey = String(e.key);
+    
+    // if(pressedKey === "Backspace"){
+    //     box = row.children[rowIndex - 1] //sending the previous box to the function since the current pointer should be on an empty box due to insertletter
+    //     deleteLetter(box);
+    //     return;
+    // }
+
+    // if(pressedKey === "Enter"){
+    //     checkGuess(row);
+    //     return;
+    // }
+
+    // if(isAlpha(pressedKey)){
+    //     insertLetter(pressedKey, box);
+    // } else {
+    //     return;
+    // }
 
     let pressedKey = String(e.key);
-    
+
+    var request = new XMLHttpRequest();
+
     if(pressedKey === "Backspace"){
-        box = row.children[rowIndex - 1] //sending the previous box to the function since the current pointer should be on an empty box due to insertletter
-        deleteLetter(box);
-        return;
+        request.open("DELETE", "server.php");
     }
 
-    if(pressedKey === "Enter"){
-        checkGuess(row);
-        return;
+    else {
+        request.open("POST", "server.php");
     }
-
-    if(isAlpha(pressedKey)){
-        insertLetter(pressedKey, box);
-    } else {
-        return;
-    }
+    
 })
 
 //reload page to play again
@@ -79,11 +94,13 @@ function createBoard() {
     for (let i = 0; i < NUMBER_OF_GUESSES; i++) {
         let row = document.createElement("div");
         row.className = "guess_row";
+        row.setAttribute("id", "row "+ i);
         
         for (let j = 0; j < 5; j++) {
             let box = document.createElement("div");
             
             box.className = "letter_box";
+            box.setAttribute("id", "box " + i + "-" + j);
             row.appendChild(box);
         }
 
