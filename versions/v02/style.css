@@ -1,82 +1,77 @@
-/* Renojan Kannan (300240070) and Karthikan Suntharesan (300240065) */
 body {
-  background-color: #282828;
+    background-color: #282828;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
+
 #title {
-  font-family: Arial;
-  color: #ffffff;
-  font-weight: bold;
-  font-size: 36px;
-  text-align: center
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 36px;
+    text-align: center;
+    margin-top: 20px;
 }
 
 #game_board {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
 }
 
 #finalmsg {
-  font-family: Arial;
-  color: #ffffff;
-  font-weight: bold;
-  font-size: 36px;
-  text-align: center
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 36px;
+    text-align: center;
+    margin-top: 20px;
 }
 
 .guess_row {
-  display: flex;
-  gap: 5px;
+    display: flex;
+    gap: 5px;
 }
 
 .letter_box {
-  /* box settings */
-  width: 50px;
-  height: 50px;
-  border: 2px solid black;
-  /*display: flex;*/
-  align-items: center;
-  background-color: #ffffff;
-
-  /* Text settings */
-  font-family: Arial;
-  color: black;
-  font-weight: bold;
-  font-size: 36px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-transform: capitalize;
-}
-
-
-.filled_box {
-  border: 2px solid black;
+    width: 50px;
+    height: 50px;
+    border: 2px solid black;
+    background-color: #ffffff;
+    color: black;
+    font-weight: bold;
+    font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: capitalize;
 }
 
 .correct_box {
-  background-color: aquamarine;
+    background-color: green;
 }
 
 .close_box {
-  background-color: yellow;
+    background-color: yellow;
 }
 
 .wrong_box {
-  background-color: gray;
+    background-color: grey;
 }
 
-
 button {
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: aquamarine;
-  border-color: black;
-  color: black;
-  padding: 15px 32px;
-  display: block;
-  margin: auto;
-  font-weight: bold;
-  font-size: 36px;
-} 
+    background-color: aquamarine;
+    border: 2px solid black;
+    color: black;
+    padding: 15px 32px;
+    display: block;
+    margin: 20px auto;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+button:hover {
+    background-color: #ff69b4;
+    cursor: pointer;
+}

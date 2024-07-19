@@ -1,88 +1,71 @@
-//Renojan Kannan (300240070) and Karthikan Suntharesan (300240065)
+document.addEventListener("DOMContentLoaded", () => {
+    const newGameBtn = document.getElementById("newGameBtn");
+    newGameBtn.addEventListener('click', startNewGame);
 
+    fetchGameState();
 
-let WORDS = [
-    "Apple", "Bread", "Chair", "Dance", "Eagle", 
-    "Flash", "Grace", "Happy", "Jelly", "Knack",
-    "Light", "Maple", "Nerve", "Ocean", "Prime", 
-    "Quiet", "Ready", "Scale", "Treat", "Usual",
-    "Vivid", "Woven", "Yield", "Zebra", "Alert", 
-    "Blame", "Crust", "Draft", "Event", "Field",
-    "Angle", "Blaze", "Cider", "Dream", "Entry",
-    "Flour", "Grape", "Hotel", "Ivory", "Jewel",
-    "Knife", "Lemon", "March", "North", "Olive",
-    "Pouch", "Quest", "Radio", "Shelf", "Thing",
-    "Unity", "Value", "Whole", "Zephyr"
-];
-const NUMBER_OF_GUESSES = 6;
-let answer = WORDS[Math.floor(Math.random() * WORDS.length)];
-let gleft = NUMBER_OF_GUESSES;
-let rowIndex = 0;
-let gameOver = false;
+    document.addEventListener("keyup", (e) => {
+        if (gameOver) return;
 
-//button that displays after the game is done
-const newButton = document.createElement('button');
-newButton.textContent = 'Play Again!';
-//checks if input string is a letter (used to check if guess contains only letters)
-var isAlpha = function(ch){
-    return /^[A-Z]$/i.test(ch);
-  }
+        // Get the current row to work on
+        let row = document.getElementsByClassName("guess_row")[6 - gleft];
+        let box = row.children[rowIndex];
 
-  createBoard();
+        let pressedKey = String(e.key);
 
+        if (pressedKey === "Backspace") {
+            if (rowIndex > 0) {
+                box = row.children[--rowIndex];
+                deleteLetter(box);
+            }
+            return;
+        }
 
-/*
-This function will listen for keystrokes and execute helper functions based on the input
-*/
-document.addEventListener("keyup", (e) => {
-    
-    if (gameOver) return; // no inputs accepted if game is done
+        if (pressedKey === "Enter") {
+            if (rowIndex === 5) { // Only allow submission if row is complete
+                submitGuess(row);
+            }
+            return;
+        }
 
-    //rowindex is being used to track columns and not box
-    let row = document.getElementsByClassName("guess_row")[6 - gleft]
-    let box = row.children[rowIndex]
+        if (isAlpha(pressedKey)) {
+            insertLetter(pressedKey.toUpperCase(), box); // Ensure uppercase input
+        }
+    });
+});
 
-    let pressedKey = String(e.key);
-    
-    if(pressedKey === "Backspace"){
-        box = row.children[rowIndex - 1] //sending the previous box to the function since the current pointer should be on an empty box due to insertletter
-        deleteLetter(box);
-        return;
-    }
+function fetchGameState() {
+    fetch('game.php')
+        .then(response => response.json())
+        .then(data => {
+            answer = data.answer;
+            gleft = data.guesses_left;
+            rowIndex = data.rowIndex;
+            gameOver = data.game_over;
+            // currentGuess = data.current_guess;
+            createBoard();
+            if (gameOver) {
+                document.getElementById("newGameBtn").style.display = "block";
+                if (data.guesses_left === 0) {
+                    document.getElementById("finalmsg").innerText = "Word was: " + data.answer;
+                } 
+                else {
+                    document.getElementById("finalmsg").innerText = "You Won!";
+                }
+            }
+        });
+}
 
-    if(pressedKey === "Enter"){
-        checkGuess(row);
-        return;
-    }
-
-    if(isAlpha(pressedKey)){
-        insertLetter(pressedKey, box);
-    } else {
-        return;
-    }
-})
-
-//reload page to play again
-newButton.addEventListener('click', () => {
-    location.reload();
-  });
-
-/*
-This function creates the 6x5 game board that Wordle will be played in
-Each row is created as a div element, assigned to classname "guess row" and a variable named "row"
-Each box that will contain a letter is created as a div element, assigned to classname "letter_box" and is appended to the current row
-Each row is appended to the game board
-*/
 function createBoard() {
     let board = document.getElementById("game_board");
+    board.innerHTML = ''; // Clear previous board if any
 
-    for (let i = 0; i < NUMBER_OF_GUESSES; i++) {
+    for (let i = 0; i < 6; i++) {
         let row = document.createElement("div");
         row.className = "guess_row";
-        
+
         for (let j = 0; j < 5; j++) {
             let box = document.createElement("div");
-            
             box.className = "letter_box";
             row.appendChild(box);
         }
@@ -91,60 +74,78 @@ function createBoard() {
     }
 }
 
-function deleteLetter(box){
-    if (rowIndex == 0) return; //dont do anything if no inputs
-    box.textContent = ""; 
-    rowIndex -= 1; //setting pointer to be at the current box with a letter which is the previous box
+function startNewGame() {
+    fetch('game.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action: 'newGame' }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        location.reload();
+    });
 }
 
-function checkGuess(row){
-    if (rowIndex < 4 || row.children[4].textContent === "") return; //do nothing if boxes not filled or the last box is empty
-    gleft--; //subtract a guess
-    let checkIndex = 0;
-    let numRight = 0;
-    for(let i = 0; i < 5; i++){
-        box = row.children[checkIndex]; //not using rowindex as itll mess up the other functions
-        if(box.textContent === answer[i]){
-            numRight++;
+function submitGuess(row) {
+    let guess = Array.from(row.children).map(box => box.textContent).join('');
+
+    fetch('game.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ guess: guess }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'game over') {
+            return; // Prevent any action if game is already over
+        }
+        
+        updateBoard(row, data.result);
+        gleft -= 1; // Decrease guesses left
+        rowIndex = 0; // Reset rowIndex for the next row
+
+        if (data.status === 'won') {
+            gameOver = true;
+            //document.getElementById("finalmsg").innerText = "You Won!";
+            document.getElementById("finalmsg").innerText = "You Won!";
+            document.getElementById("newGameBtn").style.display = "block";
+        } else if (data.status === 'lost') {
+            gameOver = true;
+            document.getElementById("finalmsg").innerText = "Word was: " + data.answer;
+            document.getElementById("newGameBtn").style.display = "block";
+        }
+    });
+}
+
+function updateBoard(row, result) {
+    for (let i = 0; i < result.length; i++) {
+        let box = row.children[i];
+        if (result[i] === 'correct') {
             box.classList.add("correct_box");
-        }
-        else if(answer.includes(box.textContent)) {
+        } else if (result[i] === 'close') {
             box.classList.add("close_box");
-        }
-        else{
+        } 
+        else {
             box.classList.add("wrong_box");
         }
-        checkIndex++;
     }
-
-    if (numRight === 5){
-        gameOver = true;
-        document.getElementById("finalmsg").innerText = "You Won!";
-        document.body.appendChild(newButton);
-
-    } else if(gleft === 0) {
-        gameOver = true;
-        document.getElementById("finalmsg").innerText = "Word was: " + answer;
-        document.body.appendChild(newButton);
-    }
-    
-    row = document.getElementsByClassName("guess_row")[6 - gleft] // move to next row
-    rowIndex = 0; //reset column counter
-    
-
-    numRight = 0; //reset the counter so that next guesses dont increment the amount correct
-
-    
-    
 }
 
-function insertLetter(letter, box){
-    
-    if (rowIndex ==  5) return; // stop anymore letters being added
-    box.textContent = letter
-
-    // this will send u to the next box in the row which should be empty
-    rowIndex += 1 
+function deleteLetter(box) {
+    box.textContent = "";
 }
 
+function insertLetter(letter, box) {
+    if (rowIndex < 5) {
+        box.textContent = letter;
+        rowIndex += 1;
+    }
+}
 
+var isAlpha = function(ch) {
+    return /^[A-Z]$/i.test(ch);
+}
