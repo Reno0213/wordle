@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("keyup", (e) => {
         if (gameOver) return;
 
-        // Get the current row to work on
         let row = document.getElementsByClassName("guess_row")[6 - gleft];
         let box = row.children[rowIndex];
 
@@ -22,14 +21,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (pressedKey === "Enter") {
-            if (rowIndex === 5) { // Only allow submission if row is complete
+            if (rowIndex === 5) {
                 submitGuess(row);
             }
             return;
         }
 
         if (isAlpha(pressedKey)) {
-            insertLetter(pressedKey.toUpperCase(), box); // Ensure uppercase input
+            insertLetter(pressedKey.toUpperCase(), box);
         }
     });
 });
@@ -42,15 +41,13 @@ function fetchGameState() {
             gleft = data.guesses_left;
             rowIndex = data.rowIndex;
             gameOver = data.game_over;
-            // currentGuess = data.current_guess;
             createBoard();
+
             if (gameOver) {
                 document.getElementById("newGameBtn").style.display = "block";
-                if (data.guesses_left === 0) {
-                    document.getElementById("finalmsg").innerText = "Word was: " + data.answer;
-                } 
-                else {
-                    document.getElementById("finalmsg").innerText = "You Won!";
+                document.getElementById("finalmsg").innerText = data.guesses_left === 0 ? "Word was: " + data.answer : "You Won!";
+                if (data.guesses_left > 0) {
+                    updateLeaderboard(data.answer, 6 - data.guesses_left);
                 }
             }
         });
@@ -58,7 +55,7 @@ function fetchGameState() {
 
 function createBoard() {
     let board = document.getElementById("game_board");
-    board.innerHTML = ''; // Clear previous board if any
+    board.innerHTML = '';
 
     for (let i = 0; i < 6; i++) {
         let row = document.createElement("div");
@@ -100,23 +97,19 @@ function submitGuess(row) {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.status === 'game over') {
-            return; // Prevent any action if game is already over
-        }
+        if (data.status === 'game over') return;
         
         updateBoard(row, data.result);
-        gleft -= 1; // Decrease guesses left
-        rowIndex = 0; // Reset rowIndex for the next row
+        gleft -= 1;
+        rowIndex = 0;
 
-        if (data.status === 'won') {
+        if (data.status === 'won' || data.status === 'lost') {
             gameOver = true;
-            //document.getElementById("finalmsg").innerText = "You Won!";
-            document.getElementById("finalmsg").innerText = "You Won!";
+            document.getElementById("finalmsg").innerText = data.status === 'won' ? "You Won!" : "Word was: " + data.answer;
             document.getElementById("newGameBtn").style.display = "block";
-        } else if (data.status === 'lost') {
-            gameOver = true;
-            document.getElementById("finalmsg").innerText = "Word was: " + data.answer;
-            document.getElementById("newGameBtn").style.display = "block";
+            if (data.status === 'won') {
+                updateLeaderboard(data.answer, 6 - gleft);
+            }
         }
     });
 }
@@ -148,4 +141,31 @@ function insertLetter(letter, box) {
 
 var isAlpha = function(ch) {
     return /^[A-Z]$/i.test(ch);
+}
+
+function updateLeaderboard(answer, guesses) {
+    fetch('leaderboard.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answer: answer, guesses: guesses }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        fetchLeaderboard();
+    });
+}
+
+function fetchLeaderboard() {
+    fetch('leaderboard.php')
+        .then(response => response.json())
+        .then(data => {
+            let leaderboardDiv = document.getElementById("leaderboard");
+            leaderboardDiv.innerHTML = "<div class='leaderboard-header'><div>Word</div><div>Guesses</div></div>";
+            data.leaderboard.forEach((entry, index) => {
+                let entryDiv = document.createElement("div");
+                entryDiv.className = "leaderboard-entry";
+                entryDiv.innerHTML = `<div>${entry.answer}</div><div>${entry.guesses}</div>`;
+                leaderboardDiv.appendChild(entryDiv);
+            });
+        });
 }

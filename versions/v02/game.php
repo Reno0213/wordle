@@ -46,7 +46,7 @@ function checkGuess($guess) {
     }
 
     $_SESSION['game']['guesses_left']--;
-    $_SESSION['game']['rowIndex'] = 0; // Reset row index for the next guess
+    $_SESSION['game']['rowIndex'] = 0;
 
     if ($numRight == 5) {
         $_SESSION['game']['game_over'] = true;

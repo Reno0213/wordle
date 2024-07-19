@@ -3,13 +3,41 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#main-container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#game-container {
+    flex-grow: 1;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+#leaderboard-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 300px;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    color: #ffffff;
 }
 
 #title {
     color: #ffffff;
     font-weight: bold;
     font-size: 36px;
-    text-align: center;
     margin-top: 20px;
 }
 
@@ -74,4 +102,20 @@ button {
 button:hover {
     background-color: #ff69b4;
     cursor: pointer;
+}
+
+#leaderboard {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.leaderboard-header, .leaderboard-entry {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.leaderboard-header {
+    font-weight: bold;
 }
